@@ -6,6 +6,8 @@
     <title>نتائج الامتحانات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <!-- [تعديل] إضافة Auth SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
@@ -17,56 +19,67 @@
         .container {
             max-width: 1200px;
         }
+        /* [تعديل] إخفاء محتوى الصفحة افتراضياً */
+        #page-content {
+            display: none;
+        }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            border-left-color: #4f46e5;
+            border-left-color: #4f46e5; /* indigo-600 */
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        /* Style for delete confirmation modal */
+        .confirm-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1001;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+        .confirm-modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .confirm-modal-content p { margin-bottom: 20px; font-size: 16px; }
+        .confirm-modal-buttons { display: flex; justify-content: center; gap: 15px; }
+        .confirm-modal-buttons button { padding: 10px 25px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.2s ease; }
+        .confirm-btn-yes { background-color: #d63031; color: white; } /* red-500 */
+        .confirm-btn-yes:hover { background-color: #c0392b; } /* darker red */
+        .confirm-btn-no { background-color: #ccc; color: #333; }
+        .confirm-btn-no:hover { background-color: #bbb; }
     </style>
 </head>
 <body class="p-4">
-    <div class="container mx-auto mt-4 md:mt-10 bg-white shadow-lg rounded-lg p-4 md:p-8">
+    <!-- [تعديل] تغليف المحتوى الرئيسي -->
+    <div id="page-content" class="container mx-auto mt-4 md:mt-10 bg-white shadow-lg rounded-lg p-4 md:p-8">
         <h1 class="text-xl md:text-3xl font-bold text-center text-indigo-700 mb-4 md:mb-6">نتائج الامتحانات</h1>
+        <div id="main-alert-message"></div> <!-- Alert area -->
 
         <div class="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-4 mb-4 md:mb-6">
             <select id="year-filter" class="form-select w-full md:w-1/4 px-4 py-2 text-sm md:text-base font-normal text-gray-700 bg-white border border-solid border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
-                <option value="all">جميع السنوات</option>
-<option value="teacher_1">مدرس 1</option>
-<option value="teacher_2">مدرس 2</option>
-<option value="teacher_3">مدرس 3</option>
-<option value="teacher_4">مدرس 4</option>
-<option value="teacher_5">مدرس 5</option>
-<option value="teacher_6">مدرس 6</option>
-<option value="teacher_7">مدرس 7</option>
-<option value="teacher_8">مدرس 8</option>
-<option value="teacher_9">مدرس 9</option>
-<option value="teacher_10">مدرس 10</option>
-<option value="teacher_11">مدرس 11</option>
-<option value="teacher_12">مدرس 12</option>
-<option value="teacher_13">مدرس 13</option>
-<option value="teacher_14">مدرس 14</option>
-<option value="teacher_15">مدرس 15</option>
-<option value="teacher_16">مدرس 16</option>
-<option value="teacher_17">مدرس 17</option>
-<option value="teacher_18">مدرس 18</option>
-<option value="teacher_19">مدرس 19</option>
-<option value="teacher_20">مدرس 20</option>
-<option value="teacher_21">مدرس 21</option>
-<option value="teacher_22">مدرس 22</option>
-<option value="teacher_23">مدرس 23</option>
-<option value="teacher_24">مدرس 24</option>
-<option value="teacher_25">مدرس 25</option>
+                <option value="all">جميع السنوات/المدرسين</option>
+                <!-- Options will be populated by JS -->
             </select>
 
             <select id="exam-filter" class="form-select w-full md:w-1/4 px-4 py-2 text-sm md:text-base font-normal text-gray-700 bg-white border border-solid border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
                 <option value="all">جميع الامتحانات</option>
-                </select>
+                <!-- Options will be populated by JS -->
+            </select>
 
             <input type="text" id="email-search" placeholder="بحث بالبريد الإلكتروني..." class="form-input w-full md:w-1/2 px-4 py-2 text-sm md:text-base font-normal text-gray-700 bg-white border border-solid border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
         </div>
@@ -81,256 +94,400 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-indigo-600 text-white">
                         <tr>
-                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">
-                                اسم الامتحان
-                            </th>
-                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">
-                                السنة الدراسية
-                            </th>
-                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">
-                                البريد الإلكتروني للطالب
-                            </th>
-                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">
-                                الدرجة
-                            </th>
-                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">
-                                مسح
-                            </th>
+                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">اسم الامتحان</th>
+                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">السنة/المدرس</th>
+                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">البريد الإلكتروني</th>
+                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">الدرجة</th>
+                            <th scope="col" class="px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium uppercase tracking-wider text-center">مسح</th>
                         </tr>
                     </thead>
                     <tbody id="results-table-body" class="bg-white divide-y divide-gray-200">
-                        </tbody>
+                        <!-- Rows will be populated by JS -->
+                    </tbody>
                 </table>
             </div>
         </div>
 
         <div id="error-message" class="hidden text-center mt-8 text-red-500 font-bold">
-            حدث خطأ في تحميل البيانات. يرجى التأكد من اتصالك بالإنترنت.
+            حدث خطأ في تحميل البيانات. يرجى التأكد من اتصالك بالإنترنت وتحديث قواعد الأمان.
         </div>
         <div id="no-data-message" class="hidden text-center mt-8 text-gray-500 font-bold">
             لا توجد نتائج امتحانات لعرضها.
         </div>
+    </div> <!-- End #page-content -->
+
+     <!-- Custom Confirmation Modal -->
+     <div id="confirmDeleteModal" class="confirm-modal" style="display: none;"> <!-- Initial state hidden -->
+        <div class="confirm-modal-content">
+            <p id="confirmDeleteText">هل أنت متأكد من حذف هذه النتيجة؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+            <div class="confirm-modal-buttons">
+                <button id="confirmDeleteYes" class="confirm-btn-yes">نعم، حذف</button>
+                <button id="confirmDeleteNo" class="confirm-btn-no">إلغاء</button>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // تهيئة Firebase
-        const firebaseConfig = {
-    apiKey: 'AIzaSyCdqYrVFspJ4rZwidfaPtc9PYpNlQQm09k',
-    appId: '1:284879336757:web:1f42836c2382d11b73087c',
-    messagingSenderId: '284879336757',
-    projectId: 'amgg-81ac3',
-    authDomain: 'amgg-81ac3.firebaseapp.com',
-    databaseURL: 'https://amgg-81ac3-default-rtdb.firebaseio.com',
-    storageBucket: 'amgg-81ac3.firebasestorage.app',
-    measurementId: 'G-FMZW8S6WES',
-        };
 
+    <script>
+        // --- Firebase Config ---
+        const firebaseConfig = {
+            apiKey: 'AIzaSyCdqYrVFspJ4rZwidfaPtc9PYpNlQQm09k',
+            appId: '1:284879336757:web:1f42836c2382d11b73087c',
+            messagingSenderId: '284879336757',
+            projectId: 'amgg-81ac3',
+            authDomain: 'amgg-81ac3.firebaseapp.com',
+            databaseURL: 'https://amgg-81ac3-default-rtdb.firebaseio.com',
+            storageBucket: 'amgg-81ac3.firebasestorage.app',
+            measurementId: 'G-FMZW8S6WES',
+        };
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
-        const database = firebase.database();
-        let allResults = [];
-        let examTitlesByYear = {};
+        // ==========================================================
+        // ========== Admin Guard ==========
+        // ==========================================================
+        const auth = firebase.auth();
+        const database = firebase.database(); // Define globally for guard and app logic
 
-        // جلب العناصر من DOM
-        const loadingElement = document.getElementById('loading');
-        const contentElement = document.getElementById('content');
-        const errorElement = document.getElementById('error-message');
-        const noDataElement = document.getElementById('no-data-message');
-        const tableBody = document.getElementById('results-table-body');
-        const yearFilter = document.getElementById('year-filter');
-        const examFilter = document.getElementById('exam-filter');
-        const emailSearch = document.getElementById('email-search');
+         // Global function for showing alerts, usable by guard too
+         function showGlobalAlert(message, type = 'danger', autoClear = true) {
+             const alertDiv = document.getElementById('main-alert-message');
+             if (alertDiv) {
+                 alertDiv.innerHTML = `<div class="bg-${type === 'danger' ? 'red' : 'green'}-100 border border-${type === 'danger' ? 'red' : 'green'}-400 text-${type === 'danger' ? 'red' : 'green'}-700 px-4 py-3 rounded relative mb-4" role="alert">${message}</div>`;
+                 if (autoClear) {
+                     setTimeout(() => { if (alertDiv) alertDiv.innerHTML = ''; }, 5000);
+                 }
+             } else {
+                 alert(message); // Fallback
+             }
+         }
 
-        // دالة لجلب البيانات من Firebase وتجهيزها
-        async function fetchData() {
-            loadingElement.classList.remove('hidden');
-            contentElement.classList.add('hidden');
-            noDataElement.classList.add('hidden');
-            errorElement.classList.add('hidden');
-            allResults = [];
-            examTitlesByYear = {};
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                database.ref(`admins/${user.uid}`).once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        console.log('Admin access granted.');
+                        document.getElementById('page-content').style.display = 'block'; // Show content
+                        initializeAppLogic(); // Initialize the main logic
+                    } else {
+                        showGlobalAlert('ليس لديك صلاحيات الوصول لهذه الصفحة.', 'danger', false);
+                         setTimeout(() => {
+                             auth.signOut();
+                             window.location.href = 'index.html'; // Redirect to login
+                         }, 3000);
+                    }
+                }).catch(error => {
+                     console.error("Error checking admin status:", error);
+                     showGlobalAlert('خطأ في التحقق من صلاحيات الأدمن.', 'danger', false);
+                     setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+                 });
+            } else {
+                console.log('User not logged in. Redirecting...');
+                window.location.href = 'index.html'; // Redirect to login
+            }
+        });
+        // ==========================================================
+        // ========== End Admin Guard ==========
+        // ==========================================================
 
-            try {
-                // جلب بيانات الامتحانات
-                const examsSnapshot = await database.ref('exams').once('value');
-                const examsData = examsSnapshot.val() || {};
 
-                for (const year in examsData) {
-                    examTitlesByYear[year] = {};
-                    for (const examId in examsData[year]) {
-                        const examInfo = examsData[year][examId];
-                        if (examInfo.title && examInfo.questions) {
-                            examTitlesByYear[year][examId] = {
-                                title: examInfo.title,
-                                totalQuestions: Object.keys(examInfo.questions).length
-                            };
+        // ==========================================================
+        // ========== Main App Logic (Wrapped in Function) ==========
+        // ==========================================================
+        function initializeAppLogic() {
+
+            let allResults = [];
+            let examDetails = {}; // Stores { examId: { title: '...', totalQuestions: #, year: '...' } }
+            let userEmails = {}; // Stores { userId: 'email@...' }
+            let teacherYears = new Set(); // Stores unique teacher/year names
+
+            // --- DOM Elements ---
+            const loadingElement = document.getElementById('loading');
+            const contentElement = document.getElementById('content');
+            const errorElement = document.getElementById('error-message');
+            const noDataElement = document.getElementById('no-data-message');
+            const tableBody = document.getElementById('results-table-body');
+            const yearFilter = document.getElementById('year-filter');
+            const examFilter = document.getElementById('exam-filter');
+            const emailSearch = document.getElementById('email-search');
+             // Confirmation Modal Elements
+            const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+            const confirmDeleteText = document.getElementById('confirmDeleteText');
+            const confirmDeleteYes = document.getElementById('confirmDeleteYes');
+            const confirmDeleteNo = document.getElementById('confirmDeleteNo');
+            let deleteConfirmationCallback = null; // To store the action for 'Yes'
+
+
+            // --- Fetch Data ---
+            async function fetchData() {
+                loadingElement.classList.remove('hidden');
+                contentElement.classList.add('hidden');
+                noDataElement.classList.add('hidden');
+                errorElement.classList.add('hidden');
+                allResults = [];
+                examDetails = {};
+                userEmails = {};
+                 teacherYears = new Set(['all']); // Start with 'all' option value
+
+
+                try {
+                    // 1. Fetch Exam Details (Titles, Total Questions, Year)
+                    const examsSnapshot = await database.ref('exams').once('value');
+                    const examsData = examsSnapshot.val() || {};
+                    for (const year in examsData) {
+                         teacherYears.add(year); // Add year to the set
+                        for (const examId in examsData[year]) {
+                            const examInfo = examsData[year][examId];
+                             // Ensure essential info exists
+                            if (examInfo && examInfo.title && examInfo.questions && Array.isArray(examInfo.questions)) {
+                                examDetails[examId] = {
+                                    title: examInfo.title,
+                                    totalQuestions: examInfo.questions.length,
+                                    year: year // Store the year/teacher name
+                                };
+                            } else {
+                                 console.warn(`Exam ${examId} in year ${year} skipped due to missing title or invalid questions.`);
+                            }
                         }
                     }
-                }
-                
-                // جلب بيانات المستخدمين
-                const usersSnapshot = await database.ref('users').once('value');
-                const usersData = usersSnapshot.val() || {};
 
-                for (const userId in usersData) {
-                    const user = usersData[userId];
-                    const userEmail = user.email || 'غير معروف';
-                    const completedExams = user.completedExams;
-                    
-                    if (completedExams) {
-                        for (const examId in completedExams) {
-                            const examResult = completedExams[examId];
-                            
-                            let examInfo = null;
-                            let examYear = null;
-                            for (const year in examTitlesByYear) {
-                                if (examTitlesByYear[year][examId]) {
-                                    examInfo = examTitlesByYear[year][examId];
-                                    examYear = year;
-                                    break;
-                                }
-                            }
+                    // 2. Fetch User Emails
+                    const usersSnapshot = await database.ref('users').once('value');
+                    const usersData = usersSnapshot.val() || {};
+                    for (const userId in usersData) {
+                        userEmails[userId] = usersData[userId].email || `User (${userId.substring(0, 5)}...)`; // Fallback name
+                    }
 
-                            if (examInfo) {
+                    // 3. Fetch Student Attempts
+                    const attemptsSnapshot = await database.ref('student_exam_attempts').once('value');
+                    const attemptsData = attemptsSnapshot.val() || {};
+
+                    for (const userId in attemptsData) {
+                        const userAttempts = attemptsData[userId];
+                        for (const examId in userAttempts) {
+                            const attempt = userAttempts[examId];
+                            const examInfo = examDetails[examId]; // Get exam details using examId
+
+                            // Ensure attempt data and corresponding exam details exist
+                            if (attempt && examInfo && userEmails[userId]) {
                                 allResults.push({
                                     userId: userId,
                                     examId: examId,
                                     examTitle: examInfo.title,
-                                    examYear: examYear,
-                                    studentEmail: userEmail,
-                                    score: examResult.score,
-                                    totalQuestions: examInfo.totalQuestions
+                                    examYear: examInfo.year, // Use year from examDetails
+                                    studentEmail: userEmails[userId],
+                                    score: attempt.score,
+                                    totalQuestions: examInfo.totalQuestions // Use total from examDetails
                                 });
                             }
                         }
                     }
-                }
 
-                loadingElement.classList.add('hidden');
-                populateExamFilter();
-                renderResults();
-                
-                if (allResults.length === 0) {
-                    noDataElement.textContent = 'لا توجد نتائج امتحانات لعرضها.';
-                    noDataElement.classList.remove('hidden');
-                }
+                    // --- Post-Fetch Operations ---
+                    loadingElement.classList.add('hidden');
+                     populateYearFilter(); // Populate year filter first
+                    populateExamFilter(); // Populate exam filter based on initial year selection
+                    renderResults(); // Display results based on initial filters
 
-            } catch (error) {
-                loadingElement.classList.add('hidden');
-                errorElement.classList.remove('hidden');
-                console.error("Error fetching data:", error);
-            }
-        }
-
-        // دالة لملء قائمة الامتحانات المنسدلة
-        function populateExamFilter() {
-            const selectedYear = yearFilter.value;
-            examFilter.innerHTML = '<option value="all">جميع الامتحانات</option>';
-            
-            let examsToDisplay = [];
-            if (selectedYear === 'all') {
-                for (const year in examTitlesByYear) {
-                    for (const examId in examTitlesByYear[year]) {
-                        examsToDisplay.push(examTitlesByYear[year][examId].title);
+                    if (allResults.length === 0) {
+                        noDataElement.textContent = 'لا توجد نتائج امتحانات لعرضها.';
+                        noDataElement.classList.remove('hidden');
+                    } else {
+                         contentElement.classList.remove('hidden'); // Show table only if there are results initially
                     }
+
+                } catch (error) {
+                    loadingElement.classList.add('hidden');
+                    errorElement.classList.remove('hidden');
+                    console.error("Error fetching data:", error);
                 }
-            } else {
-                for (const examId in examTitlesByYear[selectedYear]) {
-                    examsToDisplay.push(examTitlesByYear[selectedYear][examId].title);
-                }
             }
-            
-            const uniqueExams = [...new Set(examsToDisplay)].sort((a, b) => a.localeCompare(b, 'ar'));
-            uniqueExams.forEach(title => {
-                const option = document.createElement('option');
-                option.value = title;
-                option.textContent = title;
-                examFilter.appendChild(option);
-            });
-        }
+             // --- Populate Filters ---
+            function populateYearFilter() {
+                 // Sort years/teachers alphabetically (optional, adjust locale if needed)
+                 const sortedYears = Array.from(teacherYears).filter(y => y !== 'all').sort((a, b) => a.localeCompare(b, 'ar'));
 
-        // دالة لعرض النتائج بناءً على الفلاتر
-        function renderResults() {
-            tableBody.innerHTML = '';
-            let filteredResults = allResults;
+                 // Clear existing options except the first one ("all")
+                 yearFilter.innerHTML = '<option value="all">جميع السنوات/المدرسين</option>';
 
-            const selectedYear = yearFilter.value;
-            const selectedExam = examFilter.value;
-            const searchTerm = emailSearch.value.toLowerCase().trim();
-
-            if (selectedYear !== 'all') {
-                filteredResults = filteredResults.filter(result => result.examYear === selectedYear);
+                 sortedYears.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year; // Display teacher/year name
+                    yearFilter.appendChild(option);
+                 });
             }
 
-            if (selectedExam !== 'all') {
-                filteredResults = filteredResults.filter(result => result.examTitle === selectedExam);
-            }
+            function populateExamFilter() {
+                const selectedYear = yearFilter.value;
+                examFilter.innerHTML = '<option value="all">جميع الامتحانات</option>';
+                let examsInSelection = new Set(); // Use Set for unique titles
 
-            if (searchTerm) {
-                filteredResults = filteredResults.filter(result => result.studentEmail.toLowerCase().includes(searchTerm));
-            }
+                 allResults.forEach(result => {
+                     // If 'all' years or the result matches the selected year
+                     if (selectedYear === 'all' || result.examYear === selectedYear) {
+                         examsInSelection.add(result.examTitle);
+                     }
+                 });
 
-            if (filteredResults.length > 0) {
-                filteredResults.forEach(result => {
-                    const row = document.createElement('tr');
-                    row.classList.add('hover:bg-gray-100', 'transition-colors', 'duration-200');
-                    row.innerHTML = `
-                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-900 text-center">${result.examTitle}</td>
-                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-900 text-center">${result.examYear}</td>
-                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-900 text-center">${result.studentEmail}</td>
-                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-bold text-indigo-600 text-center">${result.score} / ${result.totalQuestions}</td>
-                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-center">
-                            <button onclick="deleteResult('${result.userId}', '${result.examId}', ${result.score})" class="text-red-600 hover:text-red-800 font-bold">مسح</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
+
+                // Sort unique exam titles alphabetically
+                const sortedExams = Array.from(examsInSelection).sort((a, b) => a.localeCompare(b, 'ar'));
+
+                sortedExams.forEach(title => {
+                    const option = document.createElement('option');
+                    option.value = title; // Use title as value for filtering
+                    option.textContent = title;
+                    examFilter.appendChild(option);
                 });
-                contentElement.classList.remove('hidden');
-                noDataElement.classList.add('hidden');
-            } else {
-                contentElement.classList.add('hidden');
-                noDataElement.classList.remove('hidden');
-                noDataElement.textContent = `لا توجد نتائج مطابقة للمعايير المحددة.`;
             }
-        }
-        
-        // دالة لحذف نتيجة الامتحان من قاعدة البيانات
-        async function deleteResult(userId, examId, score) {
-            if (confirm('هل أنت متأكد من حذف هذه النتيجة؟ هذا الإجراء لا يمكن التراجع عنه.')) {
-                try {
-                    // حذف النتيجة من قائمة الامتحانات المكتملة
-                    await database.ref(`users/${userId}/completedExams/${examId}`).remove();
-                    
-                    // تحديث مجموع درجات الطالب
-                    await database.ref(`users/${userId}/marks`).transaction(currentMarks => {
-                        return (currentMarks || 0) - score;
+
+
+            // --- Render Table ---
+            function renderResults() {
+                tableBody.innerHTML = ''; // Clear previous results
+                let filteredResults = allResults;
+
+                const selectedYear = yearFilter.value;
+                const selectedExam = examFilter.value;
+                const searchTerm = emailSearch.value.toLowerCase().trim();
+
+                // Apply filters
+                if (selectedYear !== 'all') {
+                    filteredResults = filteredResults.filter(result => result.examYear === selectedYear);
+                }
+                if (selectedExam !== 'all') {
+                    filteredResults = filteredResults.filter(result => result.examTitle === selectedExam);
+                }
+                if (searchTerm) {
+                    filteredResults = filteredResults.filter(result => result.studentEmail.toLowerCase().includes(searchTerm));
+                }
+
+                // --- Display Filtered Results ---
+                if (filteredResults.length > 0) {
+                    filteredResults.forEach(result => {
+                        const row = document.createElement('tr');
+                        row.classList.add('hover:bg-gray-100', 'transition-colors', 'duration-200');
+                        row.innerHTML = `
+                            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-900 text-center">${result.examTitle}</td>
+                            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500 text-center">${result.examYear}</td>
+                            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-900 text-center">${result.studentEmail}</td>
+                            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-bold text-indigo-600 text-center">${result.score} / ${result.totalQuestions}</td>
+                            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-center">
+                                <button data-userid="${result.userId}" data-examid="${result.examId}" class="delete-btn text-red-600 hover:text-red-800 font-bold focus:outline-none">مسح</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
                     });
-                    
-                    alert('تم حذف النتيجة بنجاح.');
-                    // إعادة جلب البيانات لتحديث الجدول
-                    fetchData();
+                     // Add event listeners to newly created delete buttons
+                     attachDeleteListeners();
+                    contentElement.classList.remove('hidden'); // Show table
+                    noDataElement.classList.add('hidden'); // Hide no data message
+                    errorElement.classList.add('hidden'); // Hide error message
+                } else {
+                    contentElement.classList.add('hidden'); // Hide table
+                    noDataElement.classList.remove('hidden'); // Show no data message
+                    errorElement.classList.add('hidden'); // Hide error message
+                    noDataElement.textContent = `لا توجد نتائج مطابقة للمعايير المحددة.`;
+                }
+            }
+             // Function to attach listeners to delete buttons
+             function attachDeleteListeners() {
+                 document.querySelectorAll('.delete-btn').forEach(button => {
+                      // Remove existing listener to prevent duplicates if re-rendering
+                     button.replaceWith(button.cloneNode(true));
+                 });
+                 // Add new listeners
+                 document.querySelectorAll('.delete-btn').forEach(button => {
+                     button.addEventListener('click', handleDeleteClick);
+                 });
+             }
+
+              // Handler for delete button click
+             function handleDeleteClick(event) {
+                 const button = event.target;
+                 const userId = button.dataset.userid;
+                 const examId = button.dataset.examid;
+                 const userEmail = button.closest('tr').cells[2].textContent; // Get email from table row
+                 const examTitle = button.closest('tr').cells[0].textContent; // Get exam title
+
+                 // Prepare confirmation message
+                 confirmDeleteText.textContent = `هل أنت متأكد من حذف نتيجة امتحان "${examTitle}" للطالب ${userEmail}؟ هذا الإجراء سيحذف المحاولة ولن يمكن التراجع عنه.`;
+
+                 // Store callback function
+                 deleteConfirmationCallback = async () => {
+                     await deleteResult(userId, examId);
+                 };
+
+                 // Show confirmation modal using flex
+                 confirmDeleteModal.style.display = 'flex';
+             }
+
+             // --- Delete Result Logic ---
+            async function deleteResult(userId, examId) {
+                console.log(`Attempting to delete result for user ${userId}, exam ${examId}`);
+                try {
+                     // Reference to the specific attempt
+                    const attemptRef = database.ref(`student_exam_attempts/${userId}/${examId}`);
+
+                     // Get the attempt data to know the score for potential rollback (though not implemented here)
+                     // const attemptSnapshot = await attemptRef.once('value');
+                     // if (!attemptSnapshot.exists()) {
+                     //     throw new Error("Attempt not found, cannot delete.");
+                     // }
+                     // const scoreToDelete = attemptSnapshot.val().score || 0;
+
+                    // Remove the attempt data
+                    await attemptRef.remove();
+
+                    // Note: This code currently DOES NOT update a central 'marks' or 'completedExams' node
+                    // under the user profile, as the original fetching logic reads directly from
+                    // 'student_exam_attempts'. If you *also* store results under users/{userId}/...,
+                    // you would need to delete/update those records here as well using a transaction.
+
+                    showGlobalAlert('تم حذف النتيجة بنجاح.', 'success');
+
+                    // Refresh data and table
+                    fetchData(); // Refetch all data to update the view accurately
+
                 } catch (error) {
                     console.error("Error deleting result:", error);
-                    alert('حدث خطأ أثناء حذف النتيجة.');
+                    showGlobalAlert(`حدث خطأ أثناء حذف النتيجة: ${error.message}`, 'danger');
+                } finally {
+                     // Hide confirmation modal regardless of outcome
+                     confirmDeleteModal.style.display = 'none';
+                     deleteConfirmationCallback = null; // Clear callback
                 }
             }
-        }
-        
-        // ربط الدوال بالنافذة لكي تكون قابلة للوصول من الزر
-        window.deleteResult = deleteResult;
 
-        // إضافة مستمعي الأحداث للفلاتر والبحث
-        yearFilter.addEventListener('change', () => {
-            populateExamFilter();
-            renderResults();
-        });
-        examFilter.addEventListener('change', renderResults);
-        emailSearch.addEventListener('input', renderResults);
 
-        // بدء جلب البيانات عند تحميل الصفحة
-        fetchData();
+            // --- Event Listeners for Filters and Search ---
+            yearFilter.addEventListener('change', () => {
+                populateExamFilter(); // Update exam options based on selected year
+                renderResults(); // Re-render table with new filters
+            });
+            examFilter.addEventListener('change', renderResults);
+            emailSearch.addEventListener('input', () => {
+                 // Simple debounce: wait 300ms after typing stops before filtering
+                 clearTimeout(emailSearch.timer);
+                 emailSearch.timer = setTimeout(renderResults, 300);
+            });
+             // --- Event Listeners for Confirmation Modal ---
+            confirmDeleteYes.addEventListener('click', () => {
+                if (deleteConfirmationCallback) {
+                    deleteConfirmationCallback(); // Execute the stored delete action
+                }
+            });
+            confirmDeleteNo.addEventListener('click', () => {
+                confirmDeleteModal.style.display = 'none'; // Hide modal
+                deleteConfirmationCallback = null; // Clear callback
+            });
+
+            // --- Initial Data Fetch ---
+            fetchData();
+
+        } // --- End of initializeAppLogic ---
     </script>
 </body>
 </html>
