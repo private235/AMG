@@ -6,329 +6,304 @@
 <title>إدارة المحاضرات</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ... (نفس أكواد الـ CSS السابقة) ... */
+/* ... (نفس أكواد الـ CSS الخاصة بك) ... */
 body {
-    font-family: 'Tajawal', sans-serif;
-    background: linear-gradient(to bottom, #f0f0f5, #ffffff);
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    position: relative; /* [إضافة] Needed for absolute positioning of the button */
+font-family: 'Tajawal', sans-serif;
+background: linear-gradient(to bottom, #f0f0f5, #ffffff);
+margin: 0;
+padding: 20px;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
 }
 .container {
-    width: 100%;
-    max-width: 600px;
-    padding: 24px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    direction: rtl;
+width: 100%;
+max-width: 600px;
+padding: 24px;
+background-color: #fff;
+border-radius: 12px;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+direction: rtl;
 }
 .appbar {
-    background-color: #6C5CE7;
-    color: white;
-    padding: 16px;
-    border-radius: 8px 8px 0 0;
-    text-align: center;
-    margin: -24px -24px 24px -24px;
+background-color: #6C5CE7;
+color: white;
+padding: 16px;
+border-radius: 8px 8px 0 0;
+text-align: center;
+margin: -24px -24px 24px -24px;
 }
 .appbar h1 {
-    margin: 0;
-    font-size: 24px;
+margin: 0;
+font-size: 24px;
 }
 .input-group {
-    margin-bottom: 20px;
+margin-bottom: 20px;
 }
 .input-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #2D3436;
+display: block;
+margin-bottom: 8px;
+font-weight: bold;
+color: #2D3436;
 }
 .input-group input,
 .input-group select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 16px;
+width: 100%;
+padding: 12px;
+border: 1px solid #ccc;
+border-radius: 8px;
+box-sizing: border-box;
+font-size: 16px;
 }
 .file-picker {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+display: flex;
+align-items: center;
+gap: 10px;
+margin-bottom: 10px;
 }
 .file-picker label {
-    background-color: #A29BFE;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
+background-color: #A29BFE;
+color: white;
+padding: 10px 15px;
+border-radius: 8px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+white-space: nowrap;
 }
 .file-picker label:hover {
-    background-color: #8C80F7;
+background-color: #8C80F7;
 }
 .file-picker input[type="file"] {
-    display: none;
+display: none;
 }
 .file-picker span {
-    font-size: 14px;
-    color: #555;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+font-size: 14px;
+color: #555;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
 }
 .button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+width: 100%;
+padding: 15px;
+border: none;
+border-radius: 8px;
+font-size: 18px;
+font-weight: bold;
+color: white;
+cursor: pointer;
+transition: background-color 0.3s ease;
 }
 .upload-btn {
-    background-color: #00CE9F;
-    margin-bottom: 10px;
+background-color: #00CE9F;
+margin-bottom: 10px;
 }
 .upload-btn:hover {
-    background-color: #00B38B;
+background-color: #00B38B;
 }
 .delete-btn {
-    background-color: #E74C3C;
+background-color: #E74C3C;
 }
 .delete-btn:hover {
-    background-color: #C0392B;
+background-color: #C0392B;
 }
 .progress-bar {
-    width: 100%;
-    height: 10px;
-    background-color: #e0e0e0;
-    border-radius: 5px;
-    margin-top: 15px;
+width: 100%;
+height: 10px;
+background-color: #e0e0e0;
+border-radius: 5px;
+margin-top: 15px;
 }
 .progress {
-    height: 100%;
-    width: 0%;
-    background-color: #6C5CE7;
-    border-radius: 5px;
-    transition: width 0.3s ease;
+height: 100%;
+width: 0%;
+background-color: #6C5CE7;
+border-radius: 5px;
+transition: width 0.3s ease;
 }
 .progress-text {
-    text-align: center;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #2D3436;
+text-align: center;
+margin-top: 10px;
+font-weight: bold;
+color: #2D3436;
 }
 .hidden {
-    display: none;
+display: none;
 }
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
+display: none;
+position: fixed;
+z-index: 1;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+background-color: rgba(0,0,0,0.4);
+padding-top: 60px;
 }
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+background-color: #fefefe;
+margin: 5% auto;
+padding: 20px;
+border: 1px solid #888;
+width: 80%;
+border-radius: 10px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 .modal-header {
-    padding: 10px 16px;
-    background-color: #6C5CE7;
-    color: white;
-    border-radius: 8px 8px 0 0;
+padding: 10px 16px;
+background-color: #6C5CE7;
+color: white;
+border-radius: 8px 8px 0 0;
 }
 .modal-body {
-    padding: 2px 16px;
-    max-height: 60vh;
-    overflow-y: auto;
+padding: 2px 16px;
+max-height: 60vh;
+overflow-y: auto;
 }
 .modal-body ul {
-    list-style: none;
-    padding: 0;
+list-style: none;
+padding: 0;
 }
 .delete-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px;
+border-bottom: 1px solid #eee;
 }
 .delete-list-item:last-child {
-    border-bottom: none;
+border-bottom: none;
 }
 .delete-list-item button {
-    background-color: #E74C3C;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
+background-color: #E74C3C;
+color: white;
+border: none;
+padding: 5px 10px;
+border-radius: 5px;
+cursor: pointer;
 }
 .close {
-    color: #aaa;
-    float: left; /* Changed from right due to rtl */
-    font-size: 28px;
-    font-weight: bold;
-    margin-left: 10px; /* Added margin for spacing */
+color: #aaa;
+float: left;
+font-size: 28px;
+font-weight: bold;
+margin-left: 10px;
 }
 .close:hover, .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-/* [إضافة] Styles for the move button */
-.move-button {
-    position: absolute;
-    top: 20px;
-    left: 20px; /* Changed from right due to rtl */
-    padding: 10px 20px;
-    background-color: #ff9f43; /* Example color */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: none;
-    z-index: 10;
-    transition: background-color 0.3s ease;
-}
-.move-button:hover {
-    background-color: #e68e3c; /* Darker shade on hover */
+color: black;
+text-decoration: none;
+cursor: pointer;
 }
 </style>
 </head>
 <body>
-
-<!-- [إضافة] زر نقل المحاضرات -->
-<a href="Move_lec.html" class="move-button">نقل المحاضرات</a>
-
+<!-- [تعديل] إضافة حاوية رئيسية مخفية -->
 <div id="page-content" style="display: none;">
     <div class="container">
         <div class="appbar">
-            <h1>إدارة المحاضرات</h1>
+        <h1>إدارة المحاضرات</h1>
         </div>
         <h3>إضافة محاضرة جديدة</h3>
         <div class="input-group">
-            <label for="lectureNumber">رقم المحاضرة</label>
-            <input type="number" id="lectureNumber" placeholder="أدخل رقم المحاضرة">
+        <label for="lectureNumber">رقم المحاضرة</label>
+        <input type="number" id="lectureNumber" placeholder="أدخل رقم المحاضرة">
         </div>
         <div class="input-group">
-            <label for="title">عنوان المحاضرة</label>
-            <input type="text" id="title" placeholder="أدخل عنوان المحاضرة">
+        <label for="title">عنوان المحاضرة</label>
+        <input type="text" id="title" placeholder="أدخل عنوان المحاضرة">
         </div>
         <div class="input-group">
-            <label for="year">المدرس</label> <!-- Changed label -->
-            <select id="year">
-                <!-- Options populated by JS -->
-            </select>
+        <label for="year">السنة الدراسية</label>
+        <select id="year">
+            </select>
         </div>
         <div class="input-group">
-            <label for="month">الشهر الدراسي (اختياري)</label>
-            <select id="month">
-                <option value="_uncategorized_" selected>غير مصنف (رفع مباشر تحت المدرس)</option> <!-- Changed text -->
-                <!-- Options populated by JS based on year selection -->
-            </select>
+            <label for="month">الشهر الدراسي (اختياري)</label>
+            <select id="month">
+                <option value="_uncategorized_" selected>غير مصنف (رفع مباشر تحت السنة)</option>
+                    </select>
         </div>
 
         <div class="input-group">
-            <div class="file-picker">
-                <label for="videoFile">اختيار فيديو</label>
-                <input type="file" id="videoFile" accept="video/*">
-                <span id="videoFileName">لم يتم اختيار فيديو</span>
-            </div>
+        <div class="file-picker">
+        <label for="videoFile">اختيار فيديو</label>
+        <input type="file" id="videoFile" accept="video/*">
+        <span id="videoFileName">لم يتم اختيار فيديو</span>
+        </div>
         </div>
         <div class="input-group">
-            <div class="file-picker">
-                <label for="logoFile">اختيار شعار (اختياري)</label>
-                <input type="file" id="logoFile" accept="image/*">
-                <span id="logoFileName">لم يتم اختيار شعار</span>
-            </div>
+        <div class="file-picker">
+        <label for="logoFile">اختيار شعار (اختياري)</label>
+        <input type="file" id="logoFile" accept="image/*">
+        <span id="logoFileName">لم يتم اختيار شعار</span>
+        </div>
         </div>
         <button id="uploadButton" class="button upload-btn">
-            <span id="uploadText">رفع المحاضرة</span>
+        <span id="uploadText">رفع المحاضرة</span>
         </button>
         <div id="uploadingStatus" class="hidden">
-            <div class="progress-bar">
-                <div id="progressBar" class="progress"></div>
-            </div>
-            <p id="progressText" class="progress-text">جاري الرفع: 0%</p>
+        <div class="progress-bar">
+        <div id="progressBar" class="progress"></div>
+        </div>
+        <p id="progressText" class="progress-text">جاري الرفع: 0%</p>
         </div>
         <hr style="margin: 20px 0;">
         <h3>حذف محاضرة موجودة</h3>
         <div class="input-group">
-            <label for="deleteYear">المدرس</label> <!-- Changed label -->
-            <select id="deleteYear">
-                <!-- Options populated by JS -->
-            </select>
+        <label for="deleteYear">السنة الدراسية</label>
+        <select id="deleteYear">
+            </select>
         </div>
         <div class="input-group">
-            <label for="deleteMonth">الشهر الدراسي</label>
-            <select id="deleteMonth">
-                <option value="_uncategorized_" selected>غير مصنف</option>
-                <!-- Options populated by JS based on year selection -->
-            </select>
+        <label for="deleteMonth">الشهر الدراسي</label>
+        <select id="deleteMonth">
+        <option value="_uncategorized_" selected>غير مصنف</option>
+        </select>
         </div>
         <button id="showDeleteButton" class="button delete-btn">
-            عرض المحاضرات للحذف
+        عرض المحاضرات للحذف
         </button>
         <div id="deleteModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span class="close">&times;</span>
-                    <h2>اختيار محاضرة للحذف</h2>
-                </div>
-                <div class="modal-body">
-                    <ul id="lecturesList">
-                        <!-- Lectures populated by JS -->
-                    </ul>
-                </div>
-            </div>
+        <div class="modal-content">
+        <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>اختيار محاضرة للحذف</h2>
+        </div>
+        <div class="modal-body">
+        <ul id="lecturesList">
+        </ul>
+        </div>
+        </div>
         </div>
     </div>
-</div>
+</div> <!-- [تعديل] إغلاق الحاوية الرئيسية -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script> <!-- [تعديل] إضافة Auth -->
 <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-storage-compat.js"></script>
 <script>
 // Your Firebase configuration
 const firebaseConfig = {
-    apiKey: 'AIzaSyCdqYrVFspJ4rZwidfaPtc9PYpNlQQm09k',
-    appId: '1:284879336757:web:1f42836c2382d11b73087c',
-    messagingSenderId: '284879336757',
-    projectId: 'amgg-81ac3',
-    authDomain: 'amgg-81ac3.firebaseapp.com',
-    databaseURL: 'https://amgg-81ac3-default-rtdb.firebaseio.com',
-    storageBucket: 'amgg-81ac3.firebasestorage.app',
-    measurementId: 'G-FMZW8S6WES',
+    apiKey: 'AIzaSyCdqYrVFspJ4rZwidfaPtc9PYpNlQQm09k',
+    appId: '1:284879336757:web:1f42836c2382d11b73087c',
+    messagingSenderId: '284879336757',
+    projectId: 'amgg-81ac3',
+    authDomain: 'amgg-81ac3.firebaseapp.com',
+    databaseURL: 'https://amgg-81ac3-default-rtdb.firebaseio.com',
+    storageBucket: 'amgg-81ac3.firebasestorage.app',
+    measurementId: 'G-FMZW8S6WES',
 };
 
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
+
+// ==========================================================
+// ========== حارس الأمان (Admin Guard) ==========
+// ==========================================================
 const auth = firebase.auth();
 const database = firebase.database();
 const storage = firebase.storage();
@@ -339,446 +314,298 @@ auth.onAuthStateChanged(user => {
             if (snapshot.exists()) {
                 console.log('Admin access granted.');
                 document.getElementById('page-content').style.display = 'block';
-                initializeAppLogic();
+                initializeAppLogic(); // [تعديل] بدء تشغيل الكود
             } else {
-                // Using a custom modal/div for alert instead of window.alert
-                showCustomAlert('ليس لديك صلاحيات الوصول لهذه الصفحة.');
-                setTimeout(() => {
-                    auth.signOut();
-                    window.location.href = 'index.html'; // Assuming index.html is the login page
-                }, 3000); // Redirect after 3 seconds
+                alert('ليس لديك صلاحيات الوصول لهذه الصفحة.');
+                auth.signOut();
+                window.location.href = 'index.html';
             }
         });
     } else {
         console.log('User not logged in. Redirecting...');
-        window.location.href = 'index.html'; // Assuming index.html is the login page
+        window.location.href = 'index.html';
     }
 });
-
-// Function to show a custom alert message
-function showCustomAlert(message) {
-    let alertBox = document.getElementById('custom-alert');
-    if (!alertBox) {
-        alertBox = document.createElement('div');
-        alertBox.id = 'custom-alert';
-        alertBox.style.position = 'fixed';
-        alertBox.style.top = '20px';
-        alertBox.style.left = '50%';
-        alertBox.style.transform = 'translateX(-50%)';
-        alertBox.style.padding = '15px';
-        alertBox.style.backgroundColor = '#f44336'; // Red color for error
-        alertBox.style.color = 'white';
-        alertBox.style.borderRadius = '8px';
-        alertBox.style.zIndex = '1000';
-        alertBox.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-        alertBox.style.fontFamily = "'Tajawal', sans-serif";
-        document.body.appendChild(alertBox);
-    }
-    alertBox.textContent = message;
-    alertBox.style.display = 'block';
-
-    // Optionally hide after some time
-    setTimeout(() => {
-        if (alertBox) alertBox.style.display = 'none';
-    }, 3000); // Hide after 3 seconds
-}
+// ==========================================================
+// ========== نهاية حارس الأمان ==========
+// ==========================================================
 
 
+// [تعديل] تغليف كل الكود الأصلي
 function initializeAppLogic() {
 
-    // Helper Functions (no change)
+    // ... (الدوال المساعدة كما هي - لا تغيير) ...
     function getDbPath(year, month = '_uncategorized_', lectureId = null) {
-        let path = `lecturess/${year}`;
-        if (month && month !== '_uncategorized_') {
-            path += `/${month}`;
-        }
-        if (lectureId) {
-            path += `/${lectureId}`;
-        }
-        return path;
+        let path = `lecturess/${year}`;
+        if (month && month !== '_uncategorized_') {
+            path += `/${month}`;
+        }
+        if (lectureId) {
+            path += `/${lectureId}`;
+        }
+        return path;
     }
     async function getMonthDisplayName(year, monthKey) {
-        if (monthKey === '_uncategorized_') return 'غير مصنف';
-        try {
-            const snapshot = await database.ref(`months/${year}/${monthKey}/name`).once('value');
-            return snapshot.val() || monthKey;
-        } catch (error) {
-            console.error("Error getting month display name:", error);
-            return monthKey;
-        }
+        if (monthKey === '_uncategorized_') return 'غير مصنف';
+        try {
+            const snapshot = await database.ref(`months/${year}/${monthKey}/name`).once('value');
+            return snapshot.val() || monthKey; // Fallback to key if name not found
+        } catch (error) {
+            console.error("Error getting month display name:", error);
+            return monthKey;
+        }
     }
     async function loadMonthsForSelect(selectElement, year) {
-        selectElement.innerHTML = '<option value="_uncategorized_" selected>غير مصنف (تحت المدرس مباشرة)</option>'; // Updated text
-        try {
-            const snapshot = await database.ref(`months/${year}`).once('value');
-            if (snapshot.exists()) {
-                const months = snapshot.val();
-                const monthsArray = Object.entries(months).map(([key, value]) => ({ id: key, ...value }));
-                monthsArray.sort((a, b) => (a.order || 999) - (b.order || 999));
-                monthsArray.forEach(month => {
-                    const option = document.createElement('option');
-                    option.value = month.id;
-                    option.textContent = month.name;
-                    selectElement.appendChild(option);
-                });
-            }
-        } catch (error) {
-            console.error("Error loading months:", error);
-        }
+        selectElement.innerHTML = '<option value="_uncategorized_" selected>غير مصنف (تحت السنة مباشرة)</option>';
+        try {
+            const snapshot = await database.ref(`months/${year}`).once('value');
+            if (snapshot.exists()) {
+                const months = snapshot.val();
+                const monthsArray = Object.entries(months).map(([key, value]) => ({ id: key, ...value }));
+                monthsArray.sort((a, b) => (a.order || 999) - (b.order || 999));
+                monthsArray.forEach(month => {
+                    const option = document.createElement('option');
+                    option.value = month.id;
+                    option.textContent = month.name;
+                    selectElement.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error("Error loading months:", error);
+        }
     }
 
-    // DOM Elements (no change)
+
+    // [تعديل] تم حذف DOMContentLoaded
+    // ... (تعريف المتغيرات كما هو) ...
     const titleInput = document.getElementById('title');
-    const lectureNumberInput = document.getElementById('lectureNumber');
-    const yearSelect = document.getElementById('year');
-    const monthSelect = document.getElementById('month');
-    const videoFileInput = document.getElementById('videoFile');
-    const logoFileInput = document.getElementById('logoFile');
-    const videoFileNameSpan = document.getElementById('videoFileName');
-    const logoFileNameSpan = document.getElementById('logoFileName');
-    const uploadButton = document.getElementById('uploadButton');
-    const uploadingStatus = document.getElementById('uploadingStatus');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-    const uploadText = document.getElementById('uploadText');
-    const deleteYearSelect = document.getElementById('deleteYear');
-    const deleteMonthSelect = document.getElementById('deleteMonth');
-    const showDeleteButton = document.getElementById('showDeleteButton');
-    const deleteModal = document.getElementById('deleteModal');
-    const closeModal = document.querySelector('#deleteModal .close');
-    const lecturesList = document.getElementById('lecturesList');
+    const lectureNumberInput = document.getElementById('lectureNumber');
+    const yearSelect = document.getElementById('year');
+    const monthSelect = document.getElementById('month'); // For upload
+    const videoFileInput = document.getElementById('videoFile');
+    const logoFileInput = document.getElementById('logoFile');
+    const videoFileNameSpan = document.getElementById('videoFileName');
+    const logoFileNameSpan = document.getElementById('logoFileName');
+    const uploadButton = document.getElementById('uploadButton');
+    const uploadingStatus = document.getElementById('uploadingStatus');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const uploadText = document.getElementById('uploadText');
+    const deleteYearSelect = document.getElementById('deleteYear');
+    const deleteMonthSelect = document.getElementById('deleteMonth'); 
+    const showDeleteButton = document.getElementById('showDeleteButton');
+    const deleteModal = document.getElementById('deleteModal');
+    const closeModal = document.querySelector('#deleteModal .close');
+    const lecturesList = document.getElementById('lecturesList');
 
-    // Populate Teacher Selects (no change)
-    for (let i = 1; i <= 25; i++) {
-        const teacherName = `مدرس ${i}`;
-        const option1 = document.createElement('option');
-        option1.value = teacherName;
-        option1.textContent = teacherName;
-        yearSelect.appendChild(option1);
+    // ... (تعبئة قوائم المدرسين كما هي) ...
+    for (let i = 1; i <= 25; i++) {
+        const teacherName = `مدرس ${i}`;
+        const option1 = document.createElement('option');
+        option1.value = teacherName;
+        option1.textContent = teacherName;
+        yearSelect.appendChild(option1);
+        const option2 = document.createElement('option');
+        option2.value = teacherName;
+        option2.textContent = teacherName;
+        deleteYearSelect.appendChild(option2);
+    }
+    
+    // ... (تحميل الشهور وإضافة event listeners كما هي) ...
+    loadMonthsForSelect(monthSelect, yearSelect.value);
+    loadMonthsForSelect(deleteMonthSelect, deleteYearSelect.value);
+    yearSelect.addEventListener('change', () => loadMonthsForSelect(monthSelect, yearSelect.value));
+    deleteYearSelect.addEventListener('change', () => loadMonthsForSelect(deleteMonthSelect, deleteYearSelect.value));
+    videoFileInput.addEventListener('change', (event) => {
+        const fileName = event.target.files[0] ? event.target.files[0].name : 'لم يتم اختيار فيديو';
+        videoFileNameSpan.textContent = fileName;
+    });
+    logoFileInput.addEventListener('change', (event) => {
+        const fileName = event.target.files[0] ? event.target.files[0].name : 'لم يتم اختيار شعار';
+        logoFileNameSpan.textContent = fileName;
+    });
 
-        const option2 = document.createElement('option');
-        option2.value = teacherName;
-        option2.textContent = teacherName;
-        deleteYearSelect.appendChild(option2);
-    }
+    // --- [بداية التعديلات] ---
+    uploadButton.addEventListener('click', async () => {
+        const title = titleInput.value.trim();
+        const lectureNumber = lectureNumberInput.value.trim();
+        const selectedYear = yearSelect.value;
+        const selectedMonth = monthSelect.value;
+        const videoFile = videoFileInput.files[0];
+        const logoFile = logoFileInput.files[0];
 
-    // Initial Load and Event Listeners (no change except alert replacement)
-    loadMonthsForSelect(monthSelect, yearSelect.value);
-    loadMonthsForSelect(deleteMonthSelect, deleteYearSelect.value);
+        if (!title || !lectureNumber || !videoFile) {
+            alert('يرجى إدخال جميع البيانات المطلوبة');
+            return;
+        }
 
-    yearSelect.addEventListener('change', () => loadMonthsForSelect(monthSelect, yearSelect.value));
-    deleteYearSelect.addEventListener('change', () => loadMonthsForSelect(deleteMonthSelect, deleteYearSelect.value));
+        uploadText.textContent = 'جاري الرفع...';
+        uploadButton.disabled = true;
+        uploadingStatus.classList.remove('hidden');
 
-    videoFileInput.addEventListener('change', (event) => {
-        const fileName = event.target.files[0] ? event.target.files[0].name : 'لم يتم اختيار فيديو';
-        videoFileNameSpan.textContent = fileName;
-    });
-    logoFileInput.addEventListener('change', (event) => {
-        const fileName = event.target.files[0] ? event.target.files[0].name : 'لم يتم اختيار شعار';
-        logoFileNameSpan.textContent = fileName;
-    });
+        try {
+            const lectureId = Date.now().toString();
+            const baseName = `${lectureNumber}_${title.replace(/\s/g, '_')}`;
 
-    uploadButton.addEventListener('click', async () => {
-        const title = titleInput.value.trim();
-        const lectureNumber = lectureNumberInput.value.trim();
-        const selectedYear = yearSelect.value;
-        const selectedMonth = monthSelect.value;
-        const videoFile = videoFileInput.files[0];
-        const logoFile = logoFileInput.files[0];
+            const videoStorageRef = storage.ref(`lectures_data/${selectedYear}/${baseName}_${lectureId}.mp4`);
+            
+            const videoUploadTask = videoStorageRef.put(videoFile); 
 
-        if (!title || !lectureNumber || !videoFile) {
-            showCustomAlert('يرجى إدخال رقم وعنوان المحاضرة واختيار ملف الفيديو.'); // Use custom alert
-            return;
-        }
-
-        uploadText.textContent = 'جاري الرفع...';
-        uploadButton.disabled = true;
-        uploadingStatus.classList.remove('hidden');
-        progressBar.style.width = '0%';
-        progressText.textContent = 'جاري الرفع: 0%';
-
-        try {
-            const lectureId = Date.now().toString();
-            // Sanitize title for filename, replacing spaces and potentially problematic chars
-            const sanitizedTitle = title.replace(/[\s\/\\?%*:|"<>]/g, '_');
-            const baseName = `${lectureNumber}_${sanitizedTitle}`;
-
-            const videoStorageRef = storage.ref(`lectures_data/${selectedYear}/${baseName}_${lectureId}.mp4`);
-            const videoUploadTask = videoStorageRef.put(videoFile);
-
-            videoUploadTask.on('state_changed',
-                (snapshot) => {
+            videoUploadTask.on('state_changed',
+                (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressBar.style.width = `${progress}%`;
-                    progressText.textContent = `جاري الرفع: ${Math.round(progress)}%`;
-                },
-                (error) => {
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `جاري الرفع: ${Math.round(progress)}%`;
+                },
+                (error) => {
                     console.error('Video upload failed', error);
-                    showCustomAlert(`حدث خطأ أثناء رفع الفيديو: ${error.message}`); // Use custom alert
-                    uploadText.textContent = 'رفع المحاضرة';
-                    uploadButton.disabled = false;
-                    uploadingStatus.classList.add('hidden');
-                },
-                async () => { // On successful video upload
-                    try {
-                        const videoDownloadURL = await videoUploadTask.snapshot.ref.getDownloadURL(); // Get download URL
-                        let logoDownloadURL = ''; // Default empty
-
+                    alert(`حدث خطأ أثناء رفع الفيديو: ${error.message}`);
+                    uploadText.textContent = 'رفع المحاضرة';
+                    uploadButton.disabled = false;
+                    uploadingStatus.classList.add('hidden');
+                },
+                async () => {
+                    try {
+                        const videoPath = videoUploadTask.snapshot.ref.fullPath;
+                        let logoPath = ''; 
+                        
                         if (logoFile) {
-                            // Sanitize logo filename part based on original image extension
-                            const logoExtension = logoFile.name.split('.').pop();
-                            const logoStorageRef = storage.ref(`lectures_data/${selectedYear}/logos/${baseName}_${lectureId}.${logoExtension}`);
-                            const logoUploadTask = logoStorageRef.put(logoFile);
-                            await logoUploadTask;
-                            logoDownloadURL = await logoUploadTask.snapshot.ref.getDownloadURL(); // Get download URL
-                        }
+                            const logoStorageRef = storage.ref(`lectures_data/${selectedYear}/logos/${baseName}_${lectureId}.jpg`);
+                            const logoUploadTask = logoStorageRef.put(logoFile);
+                            await logoUploadTask;
+                            logoPath = logoUploadTask.snapshot.ref.fullPath;
+                        }
 
-                        const dbPath = getDbPath(selectedYear, selectedMonth, lectureId);
+                        const dbPath = getDbPath(selectedYear, selectedMonth, lectureId);
 
-                        await database.ref(dbPath).set({
-                            id: lectureId,
-                            title: title,
-                            lectureNumber: lectureNumber,
-                            year: selectedYear, // Keep track of the year/teacher
-                            // month key is part of the path, no need to store explicitly unless needed elsewhere
-                            videoUrl: videoDownloadURL, // Store download URL
-                            logoUrl: logoDownloadURL,   // Store download URL
-                            timestamp: firebase.database.ServerValue.TIMESTAMP // Use server timestamp
-                        });
+                        await database.ref(dbPath).set({
+                            id: lectureId,
+                            title: title,
+                            lectureNumber: lectureNumber,
+                            year: selectedYear,
+                            month: selectedMonth, 
+                            videoPath: videoPath,
+                            logoPath: logoPath,  
+                            timestamp: Date.now()
+                        });
 
-                        showCustomAlert('تم رفع المحاضرة بنجاح!'); // Use custom alert
+                        alert('تم رفع المحاضرة بنجاح!');
+                        
+                        titleInput.value = '';
+                        lectureNumberInput.value = '';
+                        videoFileInput.value = '';
+                        logoFileInput.value = '';
+                        videoFileNameSpan.textContent = 'لم يتم اختيار فيديو';
+                        logoFileNameSpan.textContent = 'لم يتم اختيار شعار';
+                        uploadText.textContent = 'رفع المحاضرة';
+                        uploadButton.disabled = false;
+                        uploadingStatus.classList.add('hidden');
+                        loadMonthsForSelect(deleteMonthSelect, deleteYearSelect.value);
 
-                        // Reset form
-                        titleInput.value = '';
-                        lectureNumberInput.value = '';
-                        videoFileInput.value = '';
-                        logoFileInput.value = '';
-                        videoFileNameSpan.textContent = 'لم يتم اختيار فيديو';
-                        logoFileNameSpan.textContent = 'لم يتم اختيار شعار';
+                    } catch (error) {
+                        console.error('Failed to save data or upload logo', error);
+                        alert(`حدث خطأ بعد رفع الفيديو: ${error.message}`);
+                        uploadText.textContent = 'رفع المحاضرة';
+                        uploadButton.disabled = false;
+                        uploadingStatus.classList.add('hidden');
+                    }
+                }
+            );
+        } catch (error) {
+            console.error('Upload failed', error);
+            alert(`حدث خطأ أثناء رفع المحاضرة: ${error.message}`);
+            uploadText.textContent = 'رفع المحاضرة';
+            uploadButton.disabled = false;
+            uploadingStatus.classList.add('hidden');
+        }
+    });
 
-                    } catch (dbError) {
-                        console.error('Failed to save data or upload logo', dbError);
-                        showCustomAlert(`حدث خطأ بعد رفع الفيديو: ${dbError.message}`); // Use custom alert
-                    } finally {
-                        // Reset button and progress bar regardless of logo/db success/failure
-                        uploadText.textContent = 'رفع المحاضرة';
-                        uploadButton.disabled = false;
-                        uploadingStatus.classList.add('hidden');
-                        // Reload months for the delete section in case a new month was implicitly used? (Optional but safe)
-                        loadMonthsForSelect(deleteMonthSelect, deleteYearSelect.value);
-                    }
-                }
-            );
-        } catch (uploadError) {
-            console.error('Initial upload setup failed', uploadError);
-            showCustomAlert(`حدث خطأ أثناء بدء رفع المحاضرة: ${uploadError.message}`); // Use custom alert
-            uploadText.textContent = 'رفع المحاضرة';
-            uploadButton.disabled = false;
-            uploadingStatus.classList.add('hidden');
-        }
-    });
+    showDeleteButton.addEventListener('click', async () => {
+        const selectedYear = deleteYearSelect.value;
+        const selectedMonth = deleteMonthSelect.value;
+        lecturesList.innerHTML = '<li>جاري تحميل المحاضرات...</li>';
 
+        try {
+            const dbPath = getDbPath(selectedYear, selectedMonth);
+            const snapshot = await database.ref(dbPath).once('value');
+            lecturesList.innerHTML = ''; // Clear list
 
-    // --- Delete Functionality ---
-    showDeleteButton.addEventListener('click', async () => {
-        const selectedYear = deleteYearSelect.value;
-        const selectedMonth = deleteMonthSelect.value;
-        lecturesList.innerHTML = '<li>جاري تحميل المحاضرات...</li>';
-        deleteModal.style.display = 'block'; // Show modal immediately
-
-        try {
-            const dbPath = getDbPath(selectedYear, selectedMonth);
-            const snapshot = await database.ref(dbPath).once('value');
-            lecturesList.innerHTML = ''; // Clear loading message
-
-            if (snapshot.exists()) {
+            if (snapshot.exists()) {
                 const lecturesData = snapshot.val();
-                let lectures = {};
+                let lectures = {};
+                if (selectedMonth === '_uncategorized_') {
+                    Object.keys(lecturesData).forEach(key => {
+                        if (lecturesData[key] && lecturesData[key].title) {
+                            lectures[key] = lecturesData[key];
+                        }
+                    });
+                } else {
+                    lectures = lecturesData;
+                }
+                const lectureKeys = Object.keys(lectures).filter(key => lectures[key] && lectures[key].title);
 
-                // Handle structure difference: if 'uncategorized', lectures are direct children
-                if (selectedMonth === '_uncategorized_') {
-                     Object.keys(lecturesData).forEach(key => {
-                        // Check if the child is a lecture object (has a title) and not another month node
-                        if (lecturesData[key] && typeof lecturesData[key] === 'object' && lecturesData[key].title) {
-                             lectures[key] = lecturesData[key];
-                        }
-                    });
-                } else {
-                    lectures = lecturesData; // Lectures are direct children of the month node
-                }
-
-
-                const lectureKeys = Object.keys(lectures).filter(key => lectures[key] && lectures[key].title); // Ensure it's a lecture
-
-                if (lectureKeys.length > 0) {
-                     lectureKeys.sort((a, b) => (lectures[a].lectureNumber || 0) - (lectures[b].lectureNumber || 0)); // Sort by lecture number
-
-                    lectureKeys.forEach(lectureId => {
-                        const lecture = lectures[lectureId];
-                        const li = document.createElement('li');
-                        li.className = 'delete-list-item';
-                        // Pass necessary info to delete function, including download URLs for easier storage deletion
-                        li.innerHTML = `
-                            <span>${lecture.lectureNumber || ''} - ${lecture.title}</span>
-                            <button onclick="deleteLecture('${selectedYear}', '${selectedMonth}', '${lectureId}', '${lecture.videoUrl || ''}', '${lecture.logoUrl || ''}')">حذف</button>
-                        `;
-                        lecturesList.appendChild(li);
-                    });
-                } else {
-                    lecturesList.innerHTML = '<li>لا توجد محاضرات في هذا التصنيف.</li>';
-                }
-            } else {
-                lecturesList.innerHTML = '<li>لا توجد محاضرات في هذا التصنيف.</li>';
-            }
-        } catch (error) {
+                if (lectureKeys.length > 0) {
+                    lectureKeys.forEach(lectureId => {
+                        const lecture = lectures[lectureId];
+                        const li = document.createElement('li');
+                        li.className = 'delete-list-item';
+                        li.innerHTML = `
+                            <span>${lecture.lectureNumber || ''} - ${lecture.title}</span>
+                            <button onclick="deleteLecture('${selectedYear}', '${lectureId}', '${lecture.videoPath}', '${lecture.logoPath || ''}', '${selectedMonth}')">حذف</button>
+                        `;
+                        lecturesList.appendChild(li);
+                    });
+                    deleteModal.style.display = 'block';
+                } else {
+                    alert('لا توجد محاضرات في هذا الشهر/التصنيف.');
+                }
+            } else {
+                alert('لا توجد محاضرات في هذا الشهر/التصنيف.');
+            }
+        } catch (error) {
             console.error("Error fetching lectures:", error);
-            lecturesList.innerHTML = '<li>حدث خطأ أثناء تحميل المحاضرات.</li>';
-            showCustomAlert("حدث خطأ أثناء تحميل قائمة المحاضرات."); // Use custom alert
-        }
-    });
+            alert("حدث خطأ أثناء تحميل قائمة المحاضرات.");
+        }
+    });
 
     closeModal.onclick = function() {
-        deleteModal.style.display = 'none';
-    }
-    window.onclick = function(event) {
-        if (event.target == deleteModal) {
-            deleteModal.style.display = 'none';
-        }
-    }
+        deleteModal.style.display = 'none';
+    }
+    window.onclick = function(event) {
+        if (event.target == deleteModal) {
+            deleteModal.style.display = 'none';
+        }
+    }
 
-    // Make deleteLecture globally accessible
-    window.deleteLecture = async function(year, month, lectureId, videoUrl, logoUrl) {
-         // Custom confirmation dialog
-        if (!await showCustomConfirm('هل أنت متأكد من حذف هذه المحاضرة؟ هذا الإجراء لا يمكن التراجع عنه.')) {
-             return;
-        }
+    window.deleteLecture = async function(year, lectureId, videoPath, logoPath, month) {
+        // [تعديل] استخدام نافذة تأكيد مخصصة بدلاً من confirm
+        if (!window.confirm('هل أنت متأكد من حذف هذه المحاضرة؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
 
+        try {
+            const dbPath = getDbPath(year, month, lectureId);
+            await database.ref(dbPath).remove();
 
-        try {
-            // Delete database entry
-            const dbPath = getDbPath(year, month, lectureId);
-            await database.ref(dbPath).remove();
-            console.log("Database entry deleted:", dbPath);
+            const videoStorageRef = storage.ref(videoPath);
+            await videoStorageRef.delete();
 
+            if (logoPath && logoPath.length > 0) {
+                const logoStorageRef = storage.ref(logoPath);
+                await logoStorageRef.delete();
+            }
 
-             // Delete video file from Storage using URL
-            if (videoUrl) {
-                try {
-                    const videoStorageRef = storage.refFromURL(videoUrl);
-                    await videoStorageRef.delete();
-                    console.log("Video file deleted:", videoUrl);
-                } catch (storageError) {
-                     console.warn("Could not delete video file (might be already deleted or URL invalid):", storageError);
-                }
-            }
-
-
-             // Delete logo file from Storage using URL
-             if (logoUrl) {
-                 try {
-                     const logoStorageRef = storage.refFromURL(logoUrl);
-                     await logoStorageRef.delete();
-                     console.log("Logo file deleted:", logoUrl);
-                 } catch (storageError) {
-                     console.warn("Could not delete logo file (might be already deleted or URL invalid):", storageError);
-                 }
-             }
-
-
-            showCustomAlert('تم حذف المحاضرة بنجاح!'); // Use custom alert
-            deleteModal.style.display = 'none';
-             // Refresh the list in the modal by simulating a click on the show button
+            alert('تم حذف المحاضرة بنجاح!');
+            deleteModal.style.display = 'none';
+            // أعد تحميل القائمة في المودال
+            showDeleteButton.click(); 
+        } catch (error) {
+            console.error("Error deleting lecture:", error);
+            // حتى لو فشل حذف الملفات (مثلاً لأنها غير موجودة)، أغلق المودال
+            alert("تم حذف بيانات المحاضرة. ربما حدث خطأ أثناء حذف الملفات من الاستورج.");
+            deleteModal.style.display = 'none';
             showDeleteButton.click();
-
-
-        } catch (error) {
-            console.error("Error during deletion process:", error);
-             showCustomAlert(`حدث خطأ أثناء الحذف: ${error.message}. قد تحتاج لحذف الملفات يدوياً من Firebase Storage.`); // Use custom alert
-             // Still close modal and refresh list even if storage deletion failed partially
-             deleteModal.style.display = 'none';
-             showDeleteButton.click(); // Attempt to refresh the list
-        }
-    }
-
-
-     // Custom Confirm Dialog Function
-    async function showCustomConfirm(message) {
-        return new Promise(resolve => {
-            let confirmBox = document.getElementById('custom-confirm');
-            if (!confirmBox) {
-                confirmBox = document.createElement('div');
-                confirmBox.id = 'custom-confirm';
-                 // Basic styling, adjust as needed
-                confirmBox.style.position = 'fixed';
-                confirmBox.style.top = '30%';
-                confirmBox.style.left = '50%';
-                confirmBox.style.transform = 'translate(-50%, -50%)';
-                confirmBox.style.backgroundColor = 'white';
-                confirmBox.style.padding = '30px';
-                confirmBox.style.border = '1px solid #ccc';
-                confirmBox.style.borderRadius = '8px';
-                confirmBox.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
-                confirmBox.style.zIndex = '1001';
-                confirmBox.style.fontFamily = "'Tajawal', sans-serif";
-                confirmBox.style.textAlign = 'center';
-
-
-                const messagePara = document.createElement('p');
-                messagePara.style.marginBottom = '20px';
-                messagePara.style.fontSize = '16px';
-
-
-                const buttonDiv = document.createElement('div');
-
-
-                const yesButton = document.createElement('button');
-                yesButton.textContent = 'نعم';
-                yesButton.style.padding = '10px 20px';
-                yesButton.style.margin = '0 10px';
-                yesButton.style.backgroundColor = '#E74C3C'; // Red for confirm delete
-                yesButton.style.color = 'white';
-                yesButton.style.border = 'none';
-                yesButton.style.borderRadius = '5px';
-                yesButton.style.cursor = 'pointer';
-
-
-                const noButton = document.createElement('button');
-                noButton.textContent = 'لا';
-                noButton.style.padding = '10px 20px';
-                noButton.style.margin = '0 10px';
-                noButton.style.backgroundColor = '#ccc';
-                noButton.style.color = 'black';
-                noButton.style.border = 'none';
-                noButton.style.borderRadius = '5px';
-                noButton.style.cursor = 'pointer';
-
-
-                buttonDiv.appendChild(yesButton);
-                buttonDiv.appendChild(noButton);
-                confirmBox.appendChild(messagePara);
-                confirmBox.appendChild(buttonDiv);
-                document.body.appendChild(confirmBox);
-
-
-                yesButton.onclick = () => {
-                    confirmBox.style.display = 'none';
-                    resolve(true);
-                };
-
-
-                noButton.onclick = () => {
-                    confirmBox.style.display = 'none';
-                    resolve(false);
-                };
-            }
-
-
-            confirmBox.querySelector('p').textContent = message;
-            confirmBox.style.display = 'block';
-        });
-    }
-
-}
+        }
+    }
+} // [تعديل] إغلاق دالة initializeAppLogic
 </script>
 </body>
 </html>
